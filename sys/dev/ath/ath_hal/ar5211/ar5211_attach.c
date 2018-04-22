@@ -1,6 +1,4 @@
-/*-
- * SPDX-License-Identifier: ISC
- *
+/*
  * Copyright (c) 2002-2009 Sam Leffler, Errno Consulting
  * Copyright (c) 2002-2006 Atheros Communications, Inc.
  *
@@ -137,7 +135,6 @@ static const struct ath_hal_private ar5211hal = {{
 	.ah_getCTSTimeout		= ar5211GetCTSTimeout,
 	.ah_setDecompMask		= ar5211SetDecompMask,
 	.ah_setCoverageClass		= ar5211SetCoverageClass,
-	.ah_setQuiet			= ar5211SetQuiet,
 	.ah_get11nExtBusy		= ar5211Get11nExtBusy,
 	.ah_getMibCycleCounts		= ar5211GetMibCycleCounts,
 	.ah_setChainMasks		= ar5211SetChainMasks,
@@ -523,8 +520,7 @@ ar5211FillCapabilityInfo(struct ath_hal *ah)
 		pCap->halRfSilentSupport = AH_TRUE;
 	}
 
-	pCap->halRxTstampPrecision = 13;
-	pCap->halTxTstampPrecision = 16;
+	pCap->halTstampPrecision = 13;
 	pCap->halIntrMask = HAL_INT_COMMON
 			| HAL_INT_RX
 			| HAL_INT_TX

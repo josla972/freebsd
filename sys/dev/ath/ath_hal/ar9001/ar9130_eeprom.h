@@ -1,6 +1,4 @@
-/*-
- * SPDX-License-Identifier: ISC
- *
+/*
  * Copyright (c) 2010 Adrian Chadd, Xenion Pty Ltd
  * Copyright (c) 2010 Atheros Communications, Inc.
  *

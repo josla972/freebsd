@@ -1,6 +1,4 @@
-/*-
- * SPDX-License-Identifier: ISC
- *
+/*
  * Copyright (c) 2008-2009 Sam Leffler, Errno Consulting
  *
  * Permission to use, copy, modify, and/or distribute this software for any

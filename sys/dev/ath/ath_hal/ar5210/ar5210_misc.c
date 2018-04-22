@@ -1,6 +1,4 @@
-/*-
- * SPDX-License-Identifier: ISC
- *
+/*
  * Copyright (c) 2002-2009 Sam Leffler, Errno Consulting
  * Copyright (c) 2002-2004 Atheros Communications, Inc.
  *
@@ -552,13 +550,6 @@ ar5210SetDecompMask(struct ath_hal *ah, uint16_t keyidx, int en)
 void
 ar5210SetCoverageClass(struct ath_hal *ah, uint8_t coverageclass, int now)
 {
-}
-
-HAL_STATUS
-ar5210SetQuiet(struct ath_hal *ah, uint32_t period, uint32_t duration,
-    uint32_t next_start, HAL_QUIET_FLAG flags)
-{
-	return HAL_OK;
 }
 
 /*

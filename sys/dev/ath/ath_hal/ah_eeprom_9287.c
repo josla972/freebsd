@@ -1,6 +1,4 @@
-/*-
- * SPDX-License-Identifier: ISC
- *
+/*
  * Copyright (c) 2008 Sam Leffler, Errno Consulting
  * Copyright (c) 2010 Atheros Communications, Inc.
  *

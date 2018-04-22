@@ -1,6 +1,4 @@
-/*-
- * SPDX-License-Identifier: ISC
- *
+/*
  * Copyright (c) 2002-2009 Sam Leffler, Errno Consulting
  * Copyright (c) 2002-2008 Atheros Communications, Inc.
  *
@@ -2737,7 +2735,7 @@ ar5212SetRateDurationTable(struct ath_hal *ah,
 			AR_RATE_DURATION(rt->info[i].rateCode),
 			ath_hal_computetxtime(ah, rt,
 				WLAN_CTRL_FRAME_SIZE,
-				rt->info[i].controlRate, AH_FALSE, AH_TRUE));
+				rt->info[i].controlRate, AH_FALSE));
 	if (!IEEE80211_IS_CHAN_TURBO(chan)) {
 		/* 11g Table is used to cover the CCK rates. */
 		rt = ar5212GetRateTable(ah, HAL_MODE_11G);
@@ -2750,8 +2748,7 @@ ar5212SetRateDurationTable(struct ath_hal *ah,
 			OS_REG_WRITE(ah, reg,
 				ath_hal_computetxtime(ah, rt,
 					WLAN_CTRL_FRAME_SIZE,
-					rt->info[i].controlRate, AH_FALSE,
-					AH_TRUE));
+					rt->info[i].controlRate, AH_FALSE));
 			/* cck rates have short preamble option also */
 			if (rt->info[i].shortPreamble) {
 				reg += rt->info[i].shortPreamble << 2;
@@ -2759,7 +2756,7 @@ ar5212SetRateDurationTable(struct ath_hal *ah,
 					ath_hal_computetxtime(ah, rt,
 						WLAN_CTRL_FRAME_SIZE,
 						rt->info[i].controlRate,
-						AH_TRUE, AH_TRUE));
+						AH_TRUE));
 			}
 		}
 	}

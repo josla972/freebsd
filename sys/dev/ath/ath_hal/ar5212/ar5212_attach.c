@@ -1,6 +1,4 @@
-/*-
- * SPDX-License-Identifier: ISC
- *
+/*
  * Copyright (c) 2002-2009 Sam Leffler, Errno Consulting
  * Copyright (c) 2002-2008 Atheros Communications, Inc.
  *
@@ -901,8 +899,7 @@ ar5212FillCapabilityInfo(struct ath_hal *ah)
 		pCap->halBssidMatchSupport = AH_TRUE;
 	}
 
-	pCap->halRxTstampPrecision = 15;
-	pCap->halTxTstampPrecision = 16;
+	pCap->halTstampPrecision = 15;
 	pCap->halIntrMask = HAL_INT_COMMON
 			| HAL_INT_RX
 			| HAL_INT_TX
