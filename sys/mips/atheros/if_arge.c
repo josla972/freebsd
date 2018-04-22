@@ -180,7 +180,8 @@ static void arge_dmamap_cb(void *, bus_dma_segment_t *, int, int);
 static int arge_dma_alloc(struct arge_softc *);
 static void arge_dma_free(struct arge_softc *);
 static int arge_newbuf(struct arge_softc *, int);
-static __inline void arge_fixup_rx(struct mbuf *);
+static __inline struct mbuf *
+arge_fixup_rx(struct mbuf *m);
 
 static device_method_t arge_methods[] = {
 	/* Device interface */
@@ -2315,23 +2316,28 @@ arge_newbuf(struct arge_softc *sc, int idx)
  * This is required for earlier hardware where the RX path
  * requires DWORD aligned buffers.
  */
-static __inline void
+static __inline struct mbuf *
 arge_fixup_rx(struct mbuf *m)
 {
-	int		i;
-	uint16_t	*src, *dst;
+	struct mbuf *n;
 
-	src = mtod(m, uint16_t *);
-	dst = src - 1;
-
-	for (i = 0; i < m->m_len / sizeof(uint16_t); i++) {
-		*dst++ = *src++;
+	n = NULL;
+	MGETHDR(n, M_NOWAIT, MT_DATA);
+	if (n != NULL)
+       	{
+		bcopy(m->m_data, n->m_data, ETHER_HDR_LEN);
+		m->m_data += ETHER_HDR_LEN;
+		m->m_len -= ETHER_HDR_LEN;
+		n->m_len = ETHER_HDR_LEN;
+		M_MOVE_PKTHDR(n, m);
+		n->m_next = m;
+	} 
+	else
+	{
+		m_freem(m);
 	}
 
-	if (m->m_len % sizeof(uint16_t))
-		*(uint8_t *)dst = *(uint8_t *)src;
-
-	m->m_data -= ETHER_ALIGN;
+	return (n);
 }
 
 #ifdef DEVICE_POLLING
@@ -2458,19 +2464,28 @@ arge_rx_locked(struct arge_softc *sc)
 		 * If the MAC requires 4 byte alignment then the RX setup
 		 * routine will have pre-offset things; so un-offset it here.
 		 */
-		if (sc->arge_hw_flags & ARGE_HW_FLG_RX_DESC_ALIGN_4BYTE)
-			arge_fixup_rx(m);
 
-		m->m_pkthdr.rcvif = ifp;
 		/* Skip 4 bytes of CRC */
 		m->m_pkthdr.len = m->m_len = packet_len - ETHER_CRC_LEN;
-		if_inc_counter(ifp, IFCOUNTER_IPACKETS, 1);
-		rx_npkts++;
 
-		ARGE_UNLOCK(sc);
-		(*ifp->if_input)(ifp, m);
-		ARGE_LOCK(sc);
-		cur_rx->packet_addr = 0;
+		if (sc->arge_hw_flags & ARGE_HW_FLG_RX_DESC_ALIGN_4BYTE)
+			m = arge_fixup_rx(m);
+
+		rx_npkts++;
+		if (m == NULL)
+		{
+			if_inc_counter(ifp, IFCOUNTER_IQDROPS, 1);
+		}
+		else
+		{
+			m->m_pkthdr.rcvif = ifp;
+			if_inc_counter(ifp, IFCOUNTER_IPACKETS, 1);
+
+			ARGE_UNLOCK(sc);
+			(*ifp->if_input)(ifp, m);
+			ARGE_LOCK(sc);
+			cur_rx->packet_addr = 0;
+		}
 	}
 
 	if (prog > 0) {
